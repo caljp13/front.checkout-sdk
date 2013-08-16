@@ -393,10 +393,10 @@
 
   window.vtex.checkout.API = CheckoutAPI;
 
-  window.vtex.checkout.API.version = 'VERSION';
+  window.vtex.checkout.API.version = '0.1.0';
 
   window.vtex.checkout.SDK = CheckoutAPI;
 
-  window.vtex.checkout.SDK.version = 'VERSION';
+  window.vtex.checkout.SDK.version = '0.1.0';
 
 }).call(this);

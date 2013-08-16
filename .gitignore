@@ -6,4 +6,3 @@ node_modules/
 bower_components/
 npm-debug.log
 tmp-deploy/
-src/lib-bower/
