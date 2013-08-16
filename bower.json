@@ -1,0 +1,14 @@
+{
+	"name": "checkout-sdk",
+	"version": "0.1.0",
+	"main": [
+		"dist/checkout-sdk.js", "dist/checkout-sdk.min.js"
+	],
+	"dependencies": {
+		"purl": "https://github.com/allmarkedup/purl.git",
+    "front-utils": "https://github.com/vtex/front.utils.git"
+	},
+	"install": {
+		"path": "src/lib-bower"
+	}
+}
