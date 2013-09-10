@@ -85,4 +85,4 @@ module.exports = (grunt) ->
 	grunt.registerTask 'default', ['clean', 'coffee', 'copy', 'string-replace', 'server', 'karma:unit', 'watch:main']
 	grunt.registerTask 'dist', ['clean', 'coffee', 'copy', 'string-replace', 'uglify', 'copy:dist'] # Dist - minifies files
 	grunt.registerTask 'test', ['karma:single']
-	grunt.registerTask 'server', ['connect', 'remote']
+	grunt.registerTask 'server', ['connect', 'remote'] 
