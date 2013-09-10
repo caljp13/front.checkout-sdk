@@ -32,6 +32,7 @@
       this.updateItems = __bind(this.updateItems, this);
       this.removeOffering = __bind(this.removeOffering, this);
       this.addOffering = __bind(this.addOffering, this);
+      this.addOfferingWithInfo = __bind(this.addOfferingWithInfo, this);
       this.sendLocale = __bind(this.sendLocale, this);
       this.sendAttachment = __bind(this.sendAttachment, this);
       this.getOrderForm = __bind(this.getOrderForm, this);
@@ -133,10 +134,11 @@
       return this.sendAttachment(attachmentId, serializedAttachment, []);
     };
 
-    CheckoutAPI.prototype.addOffering = function(offeringId, itemIndex, expectedOrderFormSections) {
+    CheckoutAPI.prototype.addOfferingWithInfo = function(offeringId, offeringInfo, itemIndex, expectedOrderFormSections) {
       var updateItemsRequest;
       updateItemsRequest = {
-        Id: offeringId,
+        id: offeringId,
+        info: offeringInfo,
         expectedOrderFormSections: expectedOrderFormSections != null ? expectedOrderFormSections : this.expectedFormSections()
       };
       return $.ajaxQueue({
@@ -146,6 +148,10 @@
         dataType: 'json',
         data: JSON.stringify(updateItemsRequest)
       });
+    };
+
+    CheckoutAPI.prototype.addOffering = function(offeringId, itemIndex, expectedOrderFormSections) {
+      return this.addOfferingWithInfo(offeringId, null, itemIndex, expectedOrderFormSections);
     };
 
     CheckoutAPI.prototype.removeOffering = function(offeringId, itemIndex, expectedOrderFormSections) {
@@ -393,10 +399,10 @@
 
   window.vtex.checkout.API = CheckoutAPI;
 
-  window.vtex.checkout.API.version = '0.1.0';
+  window.vtex.checkout.API.version = '1.0.0';
 
   window.vtex.checkout.SDK = CheckoutAPI;
 
-  window.vtex.checkout.SDK.version = '0.1.0';
+  window.vtex.checkout.SDK.version = '1.0.0';
 
 }).call(this);
