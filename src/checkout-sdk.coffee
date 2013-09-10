@@ -82,9 +82,10 @@ class CheckoutAPI
 		serializedAttachment = JSON.stringify(locale: locale)
 		@sendAttachment(attachmentId, serializedAttachment, [])
 
-	addOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
+	addOfferingWithInfo: (offeringId, offeringInfo, itemIndex, expectedOrderFormSections) =>
 		updateItemsRequest =
-			Id: offeringId
+			id: offeringId
+			info: offeringInfo
 			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections()
 
 		$.ajaxQueue
@@ -93,6 +94,9 @@ class CheckoutAPI
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
+
+	addOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
+		@addOfferingWithInfo(offeringId, null, itemIndex, expectedOrderFormSections)
 
 	removeOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
 		updateItemsRequest =
@@ -209,7 +213,7 @@ class CheckoutAPI
 			data: JSON.stringify removeAccountIdRequest
 
 	getChangeToAnonymousUserURL: () ->
-	  @HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
+		@HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
 
 	#
 	# PRIVATE
