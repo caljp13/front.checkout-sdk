@@ -9,7 +9,7 @@ module.exports = (grunt) ->
 		relativePath: ''
 
 		# Tasks
-		clean: 
+		clean:
 			main: ['build', 'tmp-deploy']
 
 		copy:
@@ -24,6 +24,9 @@ module.exports = (grunt) ->
 				files:
 					'dist/checkout-sdk.min.js': ['build/checkout-sdk.min.js']
 					'dist/checkout-sdk.js': ['build/checkout-sdk.js']
+			checkout:
+				files:
+					'../vcs.checkout-ui/src/lib/bower_components/checkout-sdk/checkout-sdk.js': ['build/checkout-sdk.js']
 
 		coffee:
 			main:
@@ -68,7 +71,10 @@ module.exports = (grunt) ->
 				options:
 					livereload: true
 				files: ['src/**/*.html', 'src/**/*.coffee', 'spec/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
-				tasks: ['clean', 'coffee', 'copy', 'string-replace', 'karma:unit:run']
+				tasks: ['build', 'karma:unit:run']
+			checkout:
+				files: ['src/**/*.html', 'src/**/*.coffee', 'spec/**/*.coffee', 'src/**/*.js', 'src/**/*.less']
+				tasks: ['build', 'karma:unit:run', 'copy:checkout']
 
 		vtex_deploy:
 			main:
@@ -82,7 +88,9 @@ module.exports = (grunt) ->
 
 	grunt.loadNpmTasks name for name of pkg.dependencies when name[0..5] is 'grunt-'
 
-	grunt.registerTask 'default', ['clean', 'coffee', 'copy', 'string-replace', 'server', 'karma:unit', 'watch:main']
-	grunt.registerTask 'dist', ['clean', 'coffee', 'copy', 'string-replace', 'uglify', 'copy:dist'] # Dist - minifies files
+	grunt.registerTask 'build', ['clean', 'coffee', 'copy:main', 'copy:dist', 'string-replace']
+	grunt.registerTask 'default', ['build', 'server', 'karma:unit', 'watch:main']
+	grunt.registerTask 'checkout', ['build', 'karma:unit', 'copy:checkout', 'watch:checkout']
+	grunt.registerTask 'dist', ['build', 'uglify', 'copy:dist'] # Dist - minifies files
 	grunt.registerTask 'test', ['karma:single']
-	grunt.registerTask 'server', ['connect', 'remote'] 
+	grunt.registerTask 'server', ['connect', 'remote']

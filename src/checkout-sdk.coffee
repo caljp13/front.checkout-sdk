@@ -21,7 +21,7 @@ class CheckoutAPI
 		@subjectToJqXHRMap = {}
 
 	expectedFormSections: ->
-		['items', 'gifts', 'totalizers', 'clientProfileData', 'shippingData', 'paymentData', 'sellers', 'messages', 'marketingData', 'clientPreferencesData', 'storePreferencesData']
+		['items', 'totalizers', 'clientProfileData', 'shippingData', 'paymentData', 'sellers', 'messages', 'marketingData', 'clientPreferencesData', 'storePreferencesData', 'giftRegistryData']
 
 	getOrderForm: (expectedFormSections = @expectedFormSections()) =>
 		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
@@ -41,7 +41,6 @@ class CheckoutAPI
 			expectedOrderFormSections: expectedOrderFormSections
 
 		if attachmentId is undefined or serializedAttachment is undefined
-			vtex.logger.error("SendAttachment with undefined properties! attachmentId: #{attachmentId}; serializedAttachment: #{serializedAttachment}")
 			d = $.Deferred()
 			d.reject("Invalid arguments")
 			return d.promise()
@@ -54,12 +53,9 @@ class CheckoutAPI
 			stateRequestHash = options.currentStateHash.toString() + ':' +  requestHash.toString()
 
 			if @stateRequestHashToResponseMap[stateRequestHash]
-				vtex.logger.localdebug ['CACHE HIT:', attachmentId, stateRequestHash, @stateRequestHashToResponseMap[stateRequestHash]].join(' ')
 				deferred = $.Deferred()
 				deferred.resolve(@stateRequestHashToResponseMap[stateRequestHash])
 				return deferred.promise()
-			else
-				vtex.logger.localdebug ['CACHE MISS:', attachmentId, stateRequestHash].join(' ')
 
 		xhr = $.ajaxQueue
 			url: @_getSaveAttachmentURL(attachmentId)
@@ -150,6 +146,15 @@ class CheckoutAPI
 
 	removeDiscountCoupon: (expectedOrderFormSections) =>
 		return @addDiscountCoupon('', expectedOrderFormSections)
+
+	removeGiftRegistry: (expectedFormSections = @expectedFormSections()) =>
+		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
+		$.ajax
+			url: "/api/checkout/pub/orderForm/giftRegistry/#{@_getOrderFormId()}/remove"
+			type: 'POST'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(checkoutRequest)
 
 	calculateShipping: (address) =>
 		shippingRequest = address: address

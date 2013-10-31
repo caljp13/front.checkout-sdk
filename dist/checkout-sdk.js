@@ -26,6 +26,7 @@
       this.getProfileByEmail = __bind(this.getProfileByEmail, this);
       this.getAddressInformation = __bind(this.getAddressInformation, this);
       this.calculateShipping = __bind(this.calculateShipping, this);
+      this.removeGiftRegistry = __bind(this.removeGiftRegistry, this);
       this.removeDiscountCoupon = __bind(this.removeDiscountCoupon, this);
       this.addDiscountCoupon = __bind(this.addDiscountCoupon, this);
       this.removeItems = __bind(this.removeItems, this);
@@ -50,7 +51,7 @@
     }
 
     CheckoutAPI.prototype.expectedFormSections = function() {
-      return ['items', 'gifts', 'totalizers', 'clientProfileData', 'shippingData', 'paymentData', 'sellers', 'messages', 'marketingData', 'clientPreferencesData', 'storePreferencesData'];
+      return ['items', 'totalizers', 'clientProfileData', 'shippingData', 'paymentData', 'sellers', 'messages', 'marketingData', 'clientPreferencesData', 'storePreferencesData', 'giftRegistryData'];
     };
 
     CheckoutAPI.prototype.getOrderForm = function(expectedFormSections) {
@@ -83,7 +84,6 @@
         expectedOrderFormSections: expectedOrderFormSections
       };
       if (attachmentId === void 0 || serializedAttachment === void 0) {
-        vtex.logger.error("SendAttachment with undefined properties! attachmentId: " + attachmentId + "; serializedAttachment: " + serializedAttachment);
         d = $.Deferred();
         d.reject("Invalid arguments");
         return d.promise();
@@ -93,12 +93,9 @@
         requestHash = _.hash(attachmentId + JSON.stringify(orderAttachmentRequest));
         stateRequestHash = options.currentStateHash.toString() + ':' + requestHash.toString();
         if (this.stateRequestHashToResponseMap[stateRequestHash]) {
-          vtex.logger.localdebug(['CACHE HIT:', attachmentId, stateRequestHash, this.stateRequestHashToResponseMap[stateRequestHash]].join(' '));
           deferred = $.Deferred();
           deferred.resolve(this.stateRequestHashToResponseMap[stateRequestHash]);
           return deferred.promise();
-        } else {
-          vtex.logger.localdebug(['CACHE MISS:', attachmentId, stateRequestHash].join(' '));
         }
       }
       xhr = $.ajaxQueue({
@@ -231,6 +228,23 @@
 
     CheckoutAPI.prototype.removeDiscountCoupon = function(expectedOrderFormSections) {
       return this.addDiscountCoupon('', expectedOrderFormSections);
+    };
+
+    CheckoutAPI.prototype.removeGiftRegistry = function(expectedFormSections) {
+      var checkoutRequest;
+      if (expectedFormSections == null) {
+        expectedFormSections = this.expectedFormSections();
+      }
+      checkoutRequest = {
+        expectedOrderFormSections: expectedFormSections
+      };
+      return $.ajax({
+        url: "/api/checkout/pub/orderForm/giftRegistry/" + (this._getOrderFormId()) + "/remove",
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(checkoutRequest)
+      });
     };
 
     CheckoutAPI.prototype.calculateShipping = function(address) {
@@ -399,10 +413,10 @@
 
   window.vtex.checkout.API = CheckoutAPI;
 
-  window.vtex.checkout.API.version = '1.0.0';
+  window.vtex.checkout.API.version = 'VERSION';
 
   window.vtex.checkout.SDK = CheckoutAPI;
 
-  window.vtex.checkout.SDK.version = '1.0.0';
+  window.vtex.checkout.SDK.version = 'VERSION';
 
 }).call(this);

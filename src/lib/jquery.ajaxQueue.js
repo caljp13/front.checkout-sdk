@@ -16,20 +16,10 @@
 				dfd = $.Deferred(),
 				promise = dfd.promise(),
 				requestFunction = function (next) {
-					if (window.vtex && window.vtex.logger && window.vtex.logger.verbose)
-						vtex.logger.localdebug('Starting ajax call', ajaxOpts);
 					jqXHR = $.ajax(ajaxOpts);
 					jqXHR.done(dfd.resolve)
 							.fail(dfd.reject)
 							.then(next, next);
-					if (window.vtex && window.vtex.logger && window.vtex.logger.verbose) {
-						jqXHR.done(function () {
-							vtex.logger.localdebug('Success on queued ajax call', ajaxOpts);
-						});
-						jqXHR.fail(function () {
-							vtex.logger.localdebug('Fail on queued ajax call', ajaxOpts);
-						});
-					}
 				};
 		var abortFunction = function (statusText) {
 
@@ -52,8 +42,6 @@
 		};
 
 		// queue our ajax request
-		if (window.vtex && window.vtex.logger && window.vtex.logger.verbose)
-			vtex.logger.localdebug('Queueing ajax call', ajaxOpts);
 		ajaxQueue.queue(requestFunction);
 
 		// add the abort method
