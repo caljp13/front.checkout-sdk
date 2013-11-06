@@ -166,7 +166,7 @@
       });
     };
 
-    CheckoutAPI.prototype.updateItems = function(itemsJS, expectedOrderFormSections) {
+    CheckoutAPI.prototype.updateItems = function(itemsJS, expectedOrderFormSections, ajaxOptions) {
       var updateItemsRequest,
         _this = this;
       if (expectedOrderFormSections == null) {
@@ -180,13 +180,16 @@
         this.requestingItem.abort();
         console.log('Abortando', this.requestingItem);
       }
-      return this.requestingItem = $.ajaxQueue({
-        url: this._getUpdateItemURL(),
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: JSON.stringify(updateItemsRequest)
-      }).done(function() {
+      return this.requestingItem = $.ajaxQueue($.extend(
+        {
+          url: this._getUpdateItemURL(),
+          type: 'POST',
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          data: JSON.stringify(updateItemsRequest)
+        },
+        ajaxOptions
+      )).done(function() {
         return _this.requestingItem = void 0;
       });
     };
